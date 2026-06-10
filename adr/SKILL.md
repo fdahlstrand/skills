@@ -1,6 +1,6 @@
 ---
 name: adr
-description: Create and manage Architecture Decision Records (ADRs) in docs/adr/. Owns the ADR template, sequential ADR-NNNN-<slug>.md numbering, the Status lifecycle (WIP → Accepted → Superseded), and the three-test gate that decides whether a decision is even worth recording. Use this whenever a meaningful, hard-to-reverse design decision is made or deferred, or when the user says "record an ADR", "write a decision record", "is this an ADR?", "document this decision", or asks to accept/supersede an existing one. Other skills (grill-work, to-workplan) reference this skill's WIP/Accepted contract — it is the single source of truth for ADR conventions. Use standalone or as part of a grilling session.
+description: Create and manage Architecture Decision Records (ADRs) in docs/adr/. Owns the ADR template, sequential ADR-NNNN-<slug>.md numbering, a lightweight ADR index (docs/adr/README.md), the Status lifecycle (WIP → Accepted → Superseded), and the three-test gate that decides whether a decision is even worth recording. Use this whenever a meaningful, hard-to-reverse design decision is made or deferred, or when the user says "record an ADR", "write a decision record", "is this an ADR?", "document this decision", or asks to accept/supersede an existing one. Other skills (grill-work, to-workplan) reference this skill's WIP/Accepted contract — it is the single source of truth for ADR conventions. Use standalone or as part of a grilling session.
 ---
 
 # adr
@@ -50,6 +50,25 @@ ADRs live in `docs/adr/`, named `ADR-NNNN-<slug>.md` with a zero-padded sequenti
 
 **This skill owns numbering.** To allocate the next number: list `docs/adr/`, find the highest existing `ADR-NNNN`, increment. Create `docs/adr/` if it doesn't exist. When another skill needs an ADR created, it defers to this convention rather than reimplementing it.
 
+## The ADR index
+
+`docs/adr/README.md` is a lightweight index so a human or LLM can grasp what decisions exist without reading every file — and, because it lists status, it doubles as the project's **open-decision dashboard** (every `WIP` row is an unresolved decision that `to-workplan` and `grill-me` care about).
+
+Keep it **minimal** — number, title, status, and a one-line context. Resist extra columns (date, supersedes, related ADRs); they add maintenance burden and drift faster.
+
+```markdown
+# Architecture Decision Records
+
+| ADR | Title | Status | Context |
+|---|---|---|---|
+| [ADR-0001](ADR-0001-event-sourced-write-model.md) | Event-sourced write model | Accepted | One line on what's being decided |
+| [ADR-0002](ADR-0002-transport-framing.md) | Transport framing | WIP | One line on the open question |
+```
+
+**Maintenance (sync-on-write is the normal path):** whenever this skill creates an ADR, promotes it (WIP → Accepted), supersedes it, or deletes it, update the index in the same step — the skill is already in the directory to allocate the number. Create `README.md` lazily with the first ADR.
+
+**Regenerable fallback:** the ADR files are authoritative; the index is a convenience cache, never a second source of truth. Because each ADR carries its number, title, and `Status` in predictable places, the index can be rebuilt from the files if it ever drifts (e.g. after a hand-edit that bypassed the skill). If you find the index inconsistent with the files, regenerate it from the files rather than trusting it.
+
 ## Template
 
 ALWAYS use this structure. The same template serves both WIP and Accepted states — fields fill in as the decision matures; nothing is restructured on promotion.
@@ -88,13 +107,16 @@ harder, follow-on work. WIP: may be empty.>
 
 For a WIP ADR, fill **Context** and **Options Considered** richly and mark the **Decision** as deferred. Promotion just means completing **Decision** and **Consequences** and flipping the status.
 
-## Relationship to the Specification and glossary
+## Relationship to other artifacts
 
 ADRs record *decisions and rationale*. They are not the place for:
 
-- **What the system does** — that's the `SPECIFICATION.md`. An ADR may note "Spec §X to be updated to reflect this," but the spec edit itself happens elsewhere (typically a Work Package).
-- **Domain terminology** — that's `CONTEXT.md` (the glossary skill). A single decision (e.g. a boundary decision) commonly warrants *both* an ADR and glossary terms; record both. They are not mutually exclusive.
+- **What the system is / how it's structured** — that's the Architectural Description (`docs/architecture/`, the `architecture-description` skill). A viewpoint file *references* the ADR where a decision shaped it; an ADR may note "Logical view to be updated to reflect this," but the architecture doc itself is edited there.
+- **The external contract** (CLI flags, API, wire format) — that's user-facing documentation, written when the surface is built (a Work Package acceptance criterion). An ADR may capture *why* the contract is shaped as it is, not the contract itself.
+- **Domain terminology** — that's the shared `docs/CONTEXT.md` (the `context-glossary` skill). A single decision (e.g. a boundary decision) commonly warrants *both* an ADR and glossary terms; record both. They are not mutually exclusive.
+
+There is no `SPECIFICATION.md` in this toolchain — its roles are covered by ADRs (why), the Architectural Description (what/how), user docs (external contract), and code + tests (behavior).
 
 ## After writing
 
-State the ADR path and its status. If you created a WIP ADR, make clear it represents an **open decision** awaiting resolution (a good candidate for a focused `grill-me` session), and that it will be deleted on resolution if it fails the three-test gate.
+State the ADR path and its status, and update `docs/adr/README.md` accordingly. If you created a WIP ADR, make clear it represents an **open decision** awaiting resolution (a good candidate for a focused `grill-me` session), and that it will be deleted on resolution if it fails the three-test gate.

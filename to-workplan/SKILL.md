@@ -5,7 +5,7 @@ description: Synthesize a Work Plan for a single chunk of work from the current 
 
 # to-workplan
 
-Turn the current shared understanding of a chunk of work into a **Work Plan** file. A Work Plan is a transient coordination artifact for one entry on the project Roadmap. It is the single source of truth for *what packages exist, in what dependency order, and their status* — but it does not duplicate the Specification, and it does not contain detailed implementation plans (those live in separate Work Package files, generated later by `to-workpackages`).
+Turn the current shared understanding of a chunk of work into a **Work Plan** file. A Work Plan is a transient coordination artifact for one entry on the project Roadmap. It is the single source of truth for *what packages exist, in what dependency order, and their status* — but it does not duplicate durable documentation (the Architectural Description, ADRs, glossary), and it does not contain detailed implementation plans (those live in separate Work Package files, generated later by `to-workpackages`).
 
 ## Core principle: synthesize, never fabricate
 
@@ -29,7 +29,7 @@ Write the plan to `.scratch/<workplan-slug>/workplan.md`, where `<workplan-slug>
 
 ## Outcome vs. output
 
-The Work Plan's goal is an **outcome** — a desired change in the state of the world or the system ("the expression language can evaluate user-defined functions"; "open question about transport framing is resolved and the Spec updated"). It is *not* a list of outputs (files, artifacts). The plan may mention outputs as a means, but the outcome is the point. An outcome may legitimately be a change to the Specification (e.g. a prototyping chunk that resolves an open design question — the prototype itself may be disposable).
+The Work Plan's goal is an **outcome** — a desired change in the state of the world or the system ("the expression language can evaluate user-defined functions"; "open question about transport framing is resolved and ADR-0007 accepted"). It is *not* a list of outputs (files, artifacts). The plan may mention outputs as a means, but the outcome is the point. An outcome may legitimately be a change to durable documentation (e.g. a prototyping chunk that resolves an open design question and updates the Architectural Description, or a chunk whose outcome is an Accepted ADR — the prototype itself may be disposable).
 
 ## Work Plan structure
 
@@ -39,13 +39,22 @@ Use this template:
 # Work Plan: <Chunk Name>
 
 > Transient planning artifact. Roadmap entry: <reference to roadmap entry, if known>.
-> Specification: <link/path to the relevant SPECIFICATION.md section — reference, do not copy>.
+> Built against: <which Architectural Description viewpoint files / ADRs this plan was
+>   planned against, if any — reference, do not copy. Omit if no AD exists.>
 
 ## Expected Outcome
 
 <One or a few sentences describing the end state this chunk delivers. An outcome, not
-an output. May include "Specification section X updated" if this chunk resolves an
-open design question.>
+an output. May include "Architectural Description updated" or "ADR-NNNN accepted" if
+this chunk resolves an open design question.>
+
+## Constraints
+
+<Optional. The architectural boundaries this chunk must respect, drawn from the
+scope-relevant Architectural Description viewpoint files (see "Architecture as
+constraints" below). E.g. "per Logical view, Customer data referenced by ID only";
+"per Runtime view, contexts communicate via domain events". Omit if no AD exists or
+none are relevant. Work Packages inherit these as boundaries.>
 
 ## Phases
 
@@ -125,13 +134,25 @@ A research Work Package sits in the package list like any other, e.g.:
 
 and downstream packages that depend on the decision carry `deps: WP-1`.
 
+## Architecture as constraints (optional input)
+
+If an Architectural Description exists (`docs/architecture/`, owned by `architecture-description`), it is the durable context this chunk is planned against — the role a `SPECIFICATION.md` once pretended to fill. Read it as a source of **binding constraints**, not just background.
+
+1. **Optional.** Many projects — especially early prototypes — have no AD. If `docs/architecture/` is absent, skip this entirely; it is not an error.
+
+2. **Read only the scope-relevant viewpoints.** Same discipline as the WIP-ADR filter, for the same lightweight reason: pull in the Logical view if the chunk touches structure, the Runtime view if it touches interaction, the Deployment view if it touches topology — not the whole AD every time.
+
+3. **Capture constraints in the Constraints section.** Record the architectural boundaries the chunk must respect (e.g. "per Logical view, Customer data referenced by ID only"). Work Packages inherit these; `to-workpackages` does not re-derive them from the AD — the plan's Constraints section is the single source of truth the packages cite.
+
+4. **Record what you built against, for staleness detection.** Note in the header which viewpoint files (and ideally their state) the plan was built against. Work Plans are short-lived and there's normally at most one in progress, so significant AD drift under a live plan is rare — but if this plan is picked up later and those viewpoint files have since changed, surface "the architecture this plan was built against has changed — review the Constraints section." Flag it; don't auto-replan. The human judges whether to revise.
+
 ## What the Work Plan does NOT contain
 
-- It does not restate the Specification — link to it.
+- It does not restate the Architectural Description, ADRs, or glossary — it references them.
 - It does not contain detailed task/subtask implementation plans — those are Work Package files, made by `to-workpackages`.
 - It does not store per-package dependencies or status *inside the WP files* — that lives here, in the plan, the coordination surface.
 - It does not record durable architectural decisions with rationale — those go to ADRs.
 
 ## After writing
 
-Tell the user the path and summarize the outcome and package count. **Call out any Open Questions explicitly** — those block `to-workpackages` until resolved. Separately, report the **WIP ADRs** you found: which became research packages (in-scope) and which you judged out of scope, so the scope calls are visible and vetoable. If research packages dominate, flag that the chunk isn't ready to build and suggest resolving the open decisions first (e.g. a `grill-me` session per ADR).
+Tell the user the path and summarize the outcome and package count. **Call out any Open Questions explicitly** — those block `to-workpackages` until resolved. Separately, report the **WIP ADRs** you found: which became research packages (in-scope) and which you judged out of scope, so the scope calls are visible and vetoable. If an AD exists, note which viewpoint files you drew **Constraints** from. If research packages dominate, flag that the chunk isn't ready to build and suggest resolving the open decisions first (e.g. a `grill-me` session per ADR).

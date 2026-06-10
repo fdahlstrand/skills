@@ -44,10 +44,12 @@ Name each file `wp<id>-<slug>.md` (e.g. `wp3-parse-expressions.md`), where `<slu
 
 A Work Package file owns the **implementation detail** of one package:
 - the user story or scope statement
-- the acceptance criterion
+- the acceptance criterion (including any external-documentation obligation, and — for a complex package — an optional architecture-review obligation)
 - the task/subtask breakdown
 
 It does **not** own its dependencies or its status — those live only in the Work Plan. Don't restate `deps:` or `[ ]/[~]/[x]` inside the package file; that would create two sources of truth that drift.
+
+It also **inherits, but does not re-derive, architectural constraints.** If the Work Plan has a Constraints section (drawn from the Architectural Description), a package whose work is bounded by a constraint should *cite* it inline (e.g. "must respect: events-only inter-context comms") — but the Work Plan's Constraints section remains the single source of truth. Do not re-read `docs/architecture/` to re-derive constraints per package; that reintroduces the drift problem.
 
 ## Work Package structure
 
@@ -63,14 +65,25 @@ Use this template:
 <Prefer a user story: "As a <role>, I want <capability>, so that <benefit>." If this
 package is architectural runway with no standalone user value, instead give a short
 bounded-scope statement explaining what it builds and which later package(s) consume
-it. Keep scope tight — this is one cohesive, single-sitting unit.>
+it. Keep scope tight — this is one cohesive, single-sitting unit. If a Work Plan
+Constraint bounds this package, cite it here, e.g. "must respect: Customer data by ID
+only (per plan Constraints).">
 
 ## Acceptance Criterion
 
 <The observable state that proves this package delivered its value. Concrete and
 checkable — e.g. "`archie validate` exits 0 on testdata/sample.arch", "the evaluator
-returns 42 for (+ 40 2)", "Spec §4.2 updated and reviewed". This is the package's
-done-gate, distinct from completing every task.>
+returns 42 for (+ 40 2)". This is the package's done-gate, distinct from completing
+every task.
+
+If this package creates externally-visible surface (CLI flags, API, wire format),
+include the documentation obligation here, e.g. "user docs for the `validate` command
+updated". External/user docs are written at implementation time — when the surface is
+real — which is why they belong in acceptance, not authored earlier.
+
+For a complex package, an architecture-review obligation may also belong here, e.g.
+"delivery reviewed against the Logical view". (A dedicated review skill is future work;
+until it exists this is a manual check.)>
 
 ## Tasks
 

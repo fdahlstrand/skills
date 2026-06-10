@@ -5,14 +5,14 @@ description: Create and maintain ROADMAP.md, a persistent, high-level backlog of
 
 # roadmap
 
-`ROADMAP.md` is the project's **high-level backlog**: a list of chunks of work to be done, described well enough that a human or an LLM can pick one up and turn it into a Work Plan. It describes the **path ahead** and, as work completes, also becomes a record of the **path behind**.
+`docs/ROADMAP.md` is the project's **high-level backlog**: a list of chunks of work to be done, described well enough that a human or an LLM can pick one up and turn it into a Work Plan. It describes the **path ahead** and, as work completes, also becomes a record of the **path behind**.
 
 ## Optional and persistent
 
 Two defining properties:
 
-- **Optional.** The roadmap is *not* a mandatory artifact. Projects often start from a single Work Plan to get a prototype off the ground, with only a loose idea of what comes next, and never need a roadmap until there's enough road ahead to be worth indexing. Create `ROADMAP.md` when that point arrives — don't manufacture one prematurely.
-- **Persistent.** Unlike Work Plans (transient, gitignored in `.scratch/`), `ROADMAP.md` is a durable, committed document. It lives at the repo root, alongside `SPECIFICATION.md`. It **outlives** the Work Plans it mentions: a plan is spun up, executed, and deleted, but its roadmap entry persists and gets checked off.
+- **Optional.** The roadmap is *not* a mandatory artifact. Projects often start from a single Work Plan to get a prototype off the ground, with only a loose idea of what comes next, and never need a roadmap until there's enough road ahead to be worth indexing. Create `docs/ROADMAP.md` when that point arrives — don't manufacture one prematurely.
+- **Persistent.** Unlike Work Plans (transient, gitignored in `.scratch/`), `docs/ROADMAP.md` is a durable, committed document. It lives at `docs/ROADMAP.md` — a peer of `docs/CONTEXT.md`, `docs/adr/`, and `docs/architecture/`, not privileged at repo root. It **outlives** the Work Plans it mentions: a plan is spun up, executed, and deleted, but its roadmap entry persists and gets checked off.
 
 ## What the roadmap is NOT
 
@@ -88,4 +88,4 @@ The path ahead (and behind) for <project>.
 
 ## After writing
 
-State what changed (entries added, checked off, themed, or removed). If you created `ROADMAP.md` for the first time, note that it's a persistent committed artifact (repo root) — distinct from the transient `.scratch/` plans.
+State what changed (entries added, checked off, themed, or removed). If you created `docs/ROADMAP.md` for the first time, note that it's a persistent committed artifact under `docs/` — distinct from the transient `.scratch/` plans.
