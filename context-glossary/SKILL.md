@@ -1,6 +1,6 @@
 ---
 name: context-glossary
-description: Build and maintain docs/CONTEXT.md, a project's domain glossary / ubiquitous language. Captures the terms specific to this project's domain — what each term IS, with an opinionated canonical word, an _Avoid_ list of synonyms to not use, and a Flagged Ambiguities section explaining contested naming choices. Use this whenever domain terminology surfaces, when the user says "add this to the glossary", "what do we call this", "update CONTEXT.md", "define this term", or when you notice the same concept being called by several different words. Strictly a glossary: no implementation details, no decisions, no spec content. Use standalone or as part of a grilling session.
+description: Build and maintain docs/CONTEXT.md, a project's domain glossary / ubiquitous language. Captures the terms specific to this project's domain — what each term IS, with an opinionated canonical word, an _Avoid_ list of synonyms to not use, and a Flagged Ambiguities section explaining contested naming choices. Use this whenever domain terminology surfaces, when the user says "add this to the glossary", "what do we call this", "update CONTEXT.md", "define this term", or when you notice the same concept being called by several different words. Strictly a glossary — no implementation details, no decisions, no spec content. Use standalone or as part of a grilling session.
 ---
 
 # context-glossary

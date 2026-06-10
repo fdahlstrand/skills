@@ -1,6 +1,6 @@
 ---
 name: to-workplan
-description: Synthesize a Work Plan for a single chunk of work from the current conversation and the codebase, writing it to a gitignored .scratch/<workplan-slug>/ folder. A Work Plan documents one roadmap entry: its expected outcome, a checkbox-tracked list of Work Packages with dependencies, implementation notes, and any open questions. It also pulls in scope-relevant open (WIP) ADRs as research packages. Use this whenever the user wants to capture, plan, or write up a chunk of work — e.g. after a grill-work, grill-me, or design session, or when they say "make a work plan", "turn this into a work plan", "plan this out", or "write up this chunk of work". Do NOT use this to generate the detailed Work Package files — that is the to-workpackages skill.
+description: Synthesize a Work Plan for a single chunk of work from the current conversation and the codebase, writing it to a gitignored .scratch/<workplan-slug>/ folder. A Work Plan documents one roadmap entry — its expected outcome, a checkbox-tracked list of Work Packages with dependencies, implementation notes, and any open questions. It also pulls in scope-relevant open (WIP) ADRs as research packages. Use this whenever the user wants to capture, plan, or write up a chunk of work — e.g. after a grill-work, grill-me, or design session, or when they say "make a work plan", "turn this into a work plan", "plan this out", or "write up this chunk of work". Do NOT use this to generate the detailed Work Package files — that is the to-workpackages skill.
 ---
 
 # to-workplan

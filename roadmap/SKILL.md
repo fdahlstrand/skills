@@ -1,6 +1,6 @@
 ---
 name: roadmap
-description: Create and maintain ROADMAP.md, a persistent, high-level backlog of the work ahead (and a record of work behind). Entries are prose describing chunks of future work, tracked with checkboxes and an optional WIP marker, optionally grouped into theme sections. Use when the user wants to capture future work, sketch the path ahead, add or update a roadmap item, mark a chunk done, or organize the backlog into themes — or says "add to the roadmap", "what's next", "update the roadmap", "roadmap this". The roadmap is optional: many projects start from a single Work Plan and only grow a roadmap once there's enough road ahead to index. Do NOT use this for the detailed plan of one chunk (that's to-workplan) or for decisions (that's the adr skill).
+description: Create and maintain ROADMAP.md, a persistent, high-level backlog of the work ahead (and a record of work behind). Entries are prose describing chunks of future work, tracked with checkboxes and an optional WIP marker, optionally grouped into theme sections. Use when the user wants to capture future work, sketch the path ahead, add or update a roadmap item, mark a chunk done, or organize the backlog into themes — or says "add to the roadmap", "what's next", "update the roadmap", "roadmap this". The roadmap is optional; many projects start from a single Work Plan and only grow a roadmap once there's enough road ahead to index. Do NOT use this for the detailed plan of one chunk (that's to-workplan) or for decisions (that's the adr skill).
 ---
 
 # roadmap
