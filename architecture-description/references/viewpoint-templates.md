@@ -100,12 +100,21 @@ The infrastructure and topology — where elements run and how they're distribut
 
 ## development.md (Development viewpoint)
 
-How the system is organized for development — modules, components, layers, packages, build and dependency structure.
+How the system is organized for development — modules, components, layers, packages, build and dependency structure. In a greenfield project this view is *prescriptive*: it designs the structure the first increment instantiates, rather than describing existing code.
+
+This template has a required core, one conditionally required section, and an optional menu. Include an optional section only when its trigger applies — an empty section is noise.
+
+**Core (always present):**
 
 ```markdown
 # Development View
 
 > Terms: see [../CONTEXT.md](../CONTEXT.md).
+
+## Overview
+<One paragraph orienting a new developer or coding agent: the dominant
+organizational pattern, the major structural units, and — greenfield —
+whether this view describes or prescribes.>
 
 ## Code Organization
 <Modules / components / layers and how they map to Runtime Containers.>
@@ -115,4 +124,36 @@ How the system is organized for development — modules, components, layers, pac
 
 ## Conventions
 <Architecturally significant development conventions — only those with structural impact.>
+```
+
+**Conditionally required — mandatory whenever the project has any external dependency** (absent only in zero-dependency projects):
+
+```markdown
+## External Dependencies
+<Convention statement: every external dependency gets a recorded evaluation
+*before* adoption — liability plus supply chain — per the dependency
+evaluation reference (references/dependency-evaluation.md in the
+architecture-description skill). Summary table (dependency, scope, verdict,
+date) plus one subsection per dependency with the full record.>
+```
+
+Once this section exists, adopting a dependency without a recorded evaluation is a convention violation, not an oversight.
+
+**Optional menu:**
+
+```markdown
+## Seams & Extension Points
+<Include when the risk register or Logical view names elements that must stay
+swappable or independently evolvable. One entry per seam: what representation
+crosses it and who owns that representation, what must never cross it, and
+what enforces it (compiler / build rule / discipline).>
+
+## Test Strategy
+<Include when test structure is architecturally significant. Note whether
+test weight follows the stability gradient: spec-grade suites on frozen
+contracts, ordinary coverage on churny internals.>
+
+## First-Increment Instantiation
+<Greenfield only. What the first roadmap increment instantiates of the
+prescribed structure — the walking skeleton that makes every seam real.>
 ```
