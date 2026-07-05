@@ -51,7 +51,7 @@ For the full `index.md` template and conventions (system summary, viewpoint map,
 | **Deployment** | `deployment.md` | Where does the system run and how is it deployed? |
 | **Development** | `development.md` | How is the system organized for development? |
 
-This is not a waterfall; work in one viewpoint surfaces questions in others. Scenarios are the +1 thread that validates cross-viewpoint consistency. The amount of architecture work is **risk-driven** — do just enough, focused on what could cause the system to fail. The structure/template of each viewpoint file is defined in `references/viewpoint-templates.md` (load when creating or structuring a viewpoint file). The interview guidance for *eliciting* each viewpoint's content lives in `explore-architecture`; this skill defines what each file *contains*.
+This is not a waterfall; work in one viewpoint surfaces questions in others. Scenarios are the +1 thread that validates cross-viewpoint consistency. The amount of architecture work is **risk-driven** — do just enough, focused on what could cause the system to fail. The structure/template of each viewpoint file is defined in `references/viewpoint-templates.md` (load when creating or structuring a viewpoint file). The external-dependency evaluation convention (liability rubric + supply-chain posture, recorded in the Development view) is defined in `references/dependency-evaluation.md` (load when adopting or reviewing an external dependency). The interview guidance for *eliciting* each viewpoint's content lives in `explore-architecture`; this skill defines what each file *contains*.
 
 ## The `[!OPEN]` open-issue convention (owned here)
 
