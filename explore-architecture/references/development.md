@@ -18,6 +18,19 @@ The Development view maps the Logical view's elements onto code — but the mapp
 
 ---
 
+## Two modes: descriptive and prescriptive
+
+Establish the mode before asking anything else:
+
+- **Descriptive (brownfield)** — code exists; the session recovers and records how it is actually organized.
+- **Prescriptive (greenfield)** — little or no code exists; the session *designs* the structure that the first roadmap increment will instantiate. The view is a prescription until the code catches up, and says so in its Overview.
+
+**The inversion rule.** The interview sections below are written descriptively. In prescriptive mode, flip every question from *what is* to *what should be, and what makes it real*: "where does X live?" becomes "where should X live, and what will enforce that?" Most of the inversion is mechanical — apply it as you go. Where it is *not* mechanical, the sections below carry an explicit **Prescriptive:** variant.
+
+In prescriptive mode the Logical view is not an optional anchor but the input: the session's job is to design the code structure that realizes the Runtime Containers and respects the risk register.
+
+---
+
 ## Interview Guide
 
 ### Opening the Development viewpoint
@@ -29,6 +42,10 @@ Anchor to the Logical view if it exists:
 If starting without a Logical view:
 
 > "If a new developer joined the team today — how would you describe the structure of the codebase to them? What are the major parts?"
+
+**Prescriptive:** the Logical anchor is effectively mandatory — do the Logical view first if it doesn't exist. Open with:
+
+> "What code structure realizes these Runtime Containers? What is the spine of the codebase — the small set of representations or units everything else hangs off?"
 
 ### Identifying modules and components
 
@@ -48,6 +65,12 @@ For each major organizational unit:
 
 **Maturity and stability**: Is this a stable foundation that other things build on, or a frequently-changing surface?
 
+**Prescriptive:** stability becomes the *intended stability gradient* — design it, don't discover it:
+
+> "Which parts of this system are frozen external contracts — formats, grammars, APIs your users' artifacts depend on? Which internals are free to churn? Is any internal representation under pressure to become semi-stable because many things couple to it?"
+
+A common healthy shape is contract–churn–contract: frozen contracts at the system's edges, churning internals between them, and any many-dependent internal representation given a deliberate, owned surface.
+
 ### Identifying layers and boundaries
 
 > "Are there layers in the codebase — like a distinction between domain logic and infrastructure concerns? How are those enforced?"
@@ -59,17 +82,59 @@ Probe for:
 
 > "Can a developer accidentally introduce a dependency from {stable module} to {unstable module}? What prevents that?"
 
+**Prescriptive:** enforcement is a design choice, not an observation:
+
+> "What *mechanism will* enforce this boundary — compiler visibility, package layout, a build rule? If the answer is 'discipline', is that acceptable, or is there a cheap mechanical enforcement?"
+
+Prefer boundaries the toolchain checks (e.g. language-level visibility such as Go's `internal/`, module systems, build-graph rules) over boundaries that live in a document.
+
+### Seams and extension points
+
+Seams exist to serve identified risks. Source the list from the risk register and the Logical view, not from the code:
+
+> "Which elements does the risk register (or Logical view) say must stay swappable or independently evolvable?"
+
+A seam nobody can name a risk for is suspect. For each seam:
+
+**What crosses it**:
+
+> "What representation crosses this seam — what data shape, precisely? Which side defines and owns it?"
+
+**What is kept out** — the negative space is often the highest-value content:
+
+> "What must *never* cross this seam?"
+
+**Enforcement**:
+
+> "Is the seam compiler-enforced, build-enforced, or discipline-enforced? If discipline — is that acceptable, or is there a cheap mechanical enforcement?"
+
+**Stability pressure**:
+
+> "Is the crossing representation under pressure to become a contract — how many things depend on it? Is that acknowledged and owned?"
+
 ### Build and dependency structure
 
 > "How is the system built? Is it a monorepo, multiple repositories, or something else?"
 
 > "How long does a full build take? Is that acceptable? Where are the bottlenecks?"
 
-For each significant build dependency:
-
 **Internal dependencies**: Which modules depend on which? Is this structure intentional?
 
-**External dependencies**: What third-party libraries or frameworks are central? Are any of them risks (licensing, maintenance, compatibility)?
+### External dependencies
+
+Every external dependency gets a recorded evaluation *before* adoption — liability plus supply chain — kept in the Development view's External Dependencies section. The convention and record format are defined in the `architecture-description` skill's `references/dependency-evaluation.md`; load it when a dependency is on the table. Elicit per dependency:
+
+> "What is its scope — test-only, build-only, or shipped? What reaches your users?"
+
+> "Is it inward-pointing — wrapped behind a seam, swappable — or are you building *on* it with no exit? If contract-grade, what evidence says it meets an extreme-stability bar?"
+
+> "What is its license, and the licenses of everything it pulls in? Compatible with how you ship?"
+
+> "What does its security posture look like — advisory history, maintainer structure, transitive closure, install-time behavior, pinning and verification?"
+
+> "What residual risks are you accepting, by name? How are upgrades handled — reviewed like code, never auto-adopted?"
+
+In descriptive mode, sweep the existing dependency manifest and flag any dependency with no recorded evaluation.
 
 ### Mapping to Logical elements
 
@@ -81,7 +146,7 @@ If a module contains multiple logical elements, that may be appropriate (especia
 
 ### Team structure and Conway's Law
 
-If team structure is relevant:
+*Solo project or single team: skip this section.*
 
 > "How is the development team organized? Do team boundaries align with module boundaries?"
 
@@ -95,79 +160,25 @@ The Development view has strong connections to modifiability and testability:
 
 > "How is the system tested? Are there unit tests? Integration tests? At what level of the build structure?"
 
+A named principle to probe for: **test weight follows the stability gradient** — spec-grade suites on frozen contracts (they *are* the contract's executable definition), ordinary coverage on churny internals.
+
+> "Does your test investment match your stability gradient? Are the frozen contracts the most heavily specified parts of the suite — and are you over-testing internals that are free to churn?"
+
+### First-increment instantiation
+
+**Prescriptive mode only.** A prescribed structure that never says what makes it real is a wish:
+
+> "What does the first roadmap increment instantiate of this structure? Which packages exist on day one, even in trivial form?"
+
+> "Does the walking skeleton pass through every seam — so each boundary is exercised before the parts behind it get big?"
+
+Record the answer in the view's First-Increment Instantiation section.
+
 ---
 
 ## Output Structure
 
-```markdown
-# Development Viewpoint
-
-> **Living document.** Last updated: {date}
-> Terms used in this document are defined in [../CONTEXT.md](../CONTEXT.md).
-
-## Overview
-
-{One paragraph describing the overall development organization — the major structural units, their relationships, and the dominant organizational pattern (e.g. monorepo with packages, microservices in separate repositories, layered monolith). Written for a new developer or coding agent encountering the codebase for the first time.}
-
-## Repository Structure
-
-| Repository / Package | Contents | Primary Owner | Stability |
-|---|---|---|---|
-| {name} | {what it contains} | {team / person} | {stable / evolving / experimental} |
-
-## Module / Component Structure
-
-### {Module Name}
-
-**Location**: `{path or repository}`
-**Responsibility**: {what this module owns in the codebase}
-**Realizes**: {Logical element(s) from the Logical view}
-**Layer**: {domain / application / infrastructure / presentation / shared / etc.}
-
-**Depends on**:
-- `{module}`: {why}
-
-**Depended on by**:
-- `{module}`: {why}
-
-**Key constraints**: {dependency rules, what is prohibited, how boundaries are enforced}
-
----
-
-### {Module Name}
-...
-
-## Dependency Map
-
-{Narrative description of the dependency structure — which modules are foundational, which are peripheral, where the dependency flow runs. Diagrams may accompany but the narrative must be self-contained.}
-
-**Dependency direction**: {describe the intended flow, e.g. "domain modules have no dependencies on infrastructure modules"}
-
-**Known violations**: {any current violations of intended dependency rules, with rationale or open issue}
-
-## Build Topology
-
-**Build system**: {Maven / Gradle / npm / cargo / make / etc.}
-**Repository model**: {monorepo / polyrepo / hybrid}
-**Build time**: {approximate full build time}
-**CI/CD**: {brief description of pipeline, if architecturally relevant}
-
-## Logical-to-Development Mapping
-
-| Logical Element | Module(s) | Notes |
-|---|---|---|
-| {element} | `{module}` | {any mismatch or split worth noting} |
-
-## Testing Structure
-
-| Test Type | Location | Coverage Scope | Notes |
-|---|---|---|---|
-| Unit | `{path}` | {what it tests} | |
-| Integration | `{path}` | {what it tests} | |
-| End-to-end | `{path}` | {what it tests} | |
-
-{Open issues as callouts}
-```
+The structure of `development.md` is owned by the `architecture-description` skill — see its `references/viewpoint-templates.md` (required core, a conditionally required External Dependencies section, and an optional menu). This guide elicits the content; it does not define the file.
 
 ---
 
@@ -184,3 +195,7 @@ The Development view has strong connections to modifiability and testability:
 **Testing as an afterthought.** The Development view is the right place to capture how testing is structured. If testing is difficult due to module organization (e.g. hard to test domain logic in isolation because it is coupled to infrastructure), that is an architectural problem, not a testing problem.
 
 **Stability gradients ignored.** Not all modules are equally stable. Stable modules (domain logic, shared utilities) should not depend on unstable ones (UI, third-party integrations). If they do, that is a risk.
+
+**Unrecorded dependency adoption.** A dependency that arrived without an evaluation is an unpriced liability. In descriptive sessions, sweep the manifest; in prescriptive sessions, evaluate before adopting — never after.
+
+**Prescription mistaken for description.** A greenfield view must say it is prescriptive. Otherwise a later reader (or agent) treats the intended structure as fact and never notices the code has drifted from it.
