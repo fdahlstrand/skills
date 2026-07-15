@@ -4,16 +4,23 @@ The Scenarios viewpoint is the +1 in Kruchten's 4+1 model. It captures the exter
 
 Start here if this is a first session or if the system's value proposition is unclear. Return here whenever cross-viewpoint consistency needs to be validated, or whenever a structural decision raises questions about externally visible behavior.
 
+The per-Archetype motivation model (Drivers, Pains, Gains, and the functional/social/emotional lens) is inspired by the Value Proposition Canvas, Jobs-to-be-Done, and the ArchiMate motivation layer — it borrows their questions, not their notation. The goal is a rich enough understanding of each Archetype to inform architecture and code, not a filled-out canvas.
+
 ---
 
 ## Concept Hierarchy
 
 ```
 Archetype          A named class of entity that interacts with the running system
+├── Driver         Why the Archetype engages at all — the higher purpose the system serves
+├── Pain           An obstacle, cost, or risk in pursuing their Drivers
+├── Gain           An outcome they want beyond pain removal
 └── Use Case       The explicit goal an Archetype pursues — one job to be done
     └── Scenario   One path through that goal — happy path, error path, edge case
         └── Interaction   One directional exchange at the system boundary
 ```
+
+An Archetype never uses the system for its own sake — Drivers name the higher purpose it is a tool for. Pains and Gains are identified by a bold short name and may be functional, social, or emotional; the dimension is tagged *(social)* or *(emotional)* only when it is not functional. Each Use Case carries an `Addresses` trace listing the Driver/Pain/Gain names it serves — the *why* above the goal.
 
 **Interaction directions**:
 - Archetype-initiated: written with the Archetype as subject ("Archetype submits the form")
@@ -65,6 +72,22 @@ For each Archetype named:
 - What would make the system fail them?
 - How technically sophisticated are they?
 
+Probe the **operating environment** explicitly — it stays in the narrative paragraph, not a structured field, but it is the raw material the social and emotional probes work on later:
+
+> "Where are they when they use the system? Who else sees what they do with it, or the results they produce? What happens upstream and downstream of the system in their workflow?"
+
+### Capturing Drivers
+
+Before enumerating Use Cases, capture why this Archetype engages with the system at all. This is deliberately brief — two or three questions, not an interview within the interview:
+
+> "What's the bigger thing {Archetype} is trying to achieve — the thing this system is just a tool for?"
+
+> "What pressure would make them go looking for a system like this in the first place?"
+
+A Driver is never a system capability. "Generate reports" is a Use Case; "win repeat business by looking rigorous in front of clients" is a Driver. If the answer describes something the system does, ladder up: "and what does that get them?"
+
+Do **not** front-load Pains and Gains here — they are elicited by laddering from Use Case goals (below), where the conversation has something concrete to push against. Speculative pains invented in a vacuum are form-filling.
+
 Archetype names must be unique within the system. If two candidate Archetypes have the same name, probe whether they are truly distinct — different goals, permissions, or interaction patterns — or whether they are the same Archetype described twice.
 
 Watch for **Archetype conflation** — "users" that are actually two distinct Archetypes with different goals, permissions, or interaction patterns. Probe for variation: new vs. experienced, high-volume vs. occasional, technical vs. non-technical.
@@ -79,11 +102,35 @@ For each Archetype, surface their Use Cases one at a time:
 
 For each Use Case:
 
-- **Goal statement**: what job is the Archetype trying to get done? One sentence, no implementation detail.
+- **Goal statement**: what job is the Archetype trying to get done? One sentence, no implementation detail. Situational framing ("when preparing for a client meeting…") is welcome — it carries context a bare capability statement hides.
 - **Preconditions**: what must be true before the Archetype can pursue this goal?
 - **Architectural significance**: is this Use Case hard to get right? Would failure here be damaging?
 
 > "Is there anything about this Use Case that you'd expect to be technically difficult, or where failure would be particularly costly?"
+
+### Laddering — from goal to Pains and Gains
+
+For each Use Case goal, ladder up to the motivation behind it:
+
+> "Why does that matter to {Archetype} — what does it cost them today, or what does it get them?"
+
+The answer is a Pain or a Gain. Capture it at that moment with a bold short name in the Archetype's profile, and record the Use Case's `Addresses` line as a by-product — the trace is never a separate reconciliation chore. Word Pains situationally where possible ("when presenting on-site, flaky venue wifi makes live demos risky").
+
+Then probe the non-functional dimensions — this is where requirements that are real but not "logical" hide:
+
+> "Who sees the result of this? What would achieving it well make {Archetype} look like — and what would make them look bad?"
+
+> "Is there anything about doing this that's stressful, tedious, or anxiety-inducing today?"
+
+Tag what surfaces *(social)* or *(emotional)*. A social Gain like **Credibility with clients** can make report accuracy and polish architecturally significant even when the functional job is easy.
+
+### The motivation sweep
+
+After an Archetype's Use Cases have been explored, sweep for what nothing addresses:
+
+> "Looking at {Archetype}'s Pains and Gains — are there any that no Use Case addresses?"
+
+Each unserved Pain or Gain is either a missing Use Case or a deliberate non-goal — make the user choose, and record the choice. Conversely, a Use Case whose `Addresses` line is empty is unjustified: ladder up, or question whether it belongs.
 
 Don't try to enumerate all Use Cases before exploring any deeply. Follow the risk — explore architecturally significant Use Cases first.
 
@@ -138,7 +185,15 @@ After a set of Use Cases has been identified:
 
 > "If we had to pick the two or three Use Cases that would be hardest to get right, or where failure would be most damaging — which would they be?"
 
-These become **architecturally significant Use Cases** that drive the structural viewpoints. Mark them explicitly in `scenarios.md`.
+And the motivation-side companion, so significance can flow from the why as well as from technical difficulty:
+
+> "Which Pains are most severe — where does failing to relieve them hurt {Archetype} the most?"
+
+A Use Case addressing a severe Pain or a load-bearing social Gain is architecturally significant even when it is technically easy. These become **architecturally significant Use Cases** that drive the structural viewpoints. Mark them explicitly in `scenarios.md`, with the `Addresses` trace informing the rationale.
+
+### Upgrading older ADs
+
+Earlier versions of the `scenarios.md` template had a per-Archetype **"Primary concerns"** list instead of Drivers/Pains/Gains. When a session touches an Archetype that still has one, treat each listed concern as raw material: most are a Pain, Gain, or Driver stated flatly — the laddering question sorts them. Migrate per-Archetype as part of normal exploration, previewed and confirmed like any other write; the old section stands until then. A dedicated review-and-migrate pass is the architect's option, never a requirement.
 
 ### Cross-viewpoint validation
 
@@ -171,19 +226,30 @@ coding agent or new team member encountering this viewpoint for the first time.}
 
 ### {Archetype Name}
 
-{One paragraph: who this Archetype is, their context, and what distinguishes
-them from other Archetypes. Include relevant characteristics: technical sophistication,
-frequency of interaction, permissions, volume.}
+{One paragraph: who this Archetype is, their operating environment — where and
+when they use the system, who else sees the results, the workflow around it —
+and what distinguishes them from other Archetypes. Include relevant
+characteristics: technical sophistication, frequency of interaction,
+permissions, volume.}
 
-**Primary concerns**:
-- {concern}: {why it matters to this Archetype}
+**Drivers** — why they engage with the system at all:
+- {Higher purpose or external pressure the system is a tool for — never a system capability. E.g. "Grow the consultancy's client base"}
+
+**Pains**:
+- **{Short name, e.g. Unreliable live demos}**: {description, situationally worded — "when presenting on-site…"} {(social) / (emotional) if not functional}
+
+**Gains**:
+- **{Short name, e.g. Credibility with clients}**: {description} {(social) / (emotional) if not functional}
+
+{No minimum lengths — each list is as long as understanding warrants.}
 
 #### Use Cases
 
 ##### {Use Case Name}
 
 **Goal**: {One sentence — the job the Archetype is trying to get done. No implementation detail.}
-**Architecturally Significant**: Yes / No — {rationale if yes}
+**Addresses**: {Driver/Pain/Gain short names this Use Case serves, e.g. Unreliable live demos, Credibility with clients}
+**Architecturally Significant**: Yes / No — {rationale if yes, leaning on the Addresses trace where the significance is motivational}
 
 **Preconditions**:
 - {what must be true before the Archetype can pursue this goal}
@@ -275,6 +341,14 @@ Cross-reference open issues in the relevant viewpoint files. Omit if none.}
 ## Common Pitfalls
 
 **Use Cases as feature lists.** A Use Case names a goal, not a capability. "Password reset" is a feature. "Regain access to an account after forgetting credentials" is a goal. The latter reveals context and urgency that the former hides.
+
+**Drivers stated as system capabilities.** "Generate reports" is a Use Case, not a Driver. A Driver names what the Archetype is ultimately after — the thing the system is merely a tool for. If a candidate Driver describes something the system does, ladder up: "and what does that get them?"
+
+**Pains and Gains that are features in disguise.** "Lacks a dashboard" is a solution wearing a pain's clothes. The pain underneath is something like "can't tell at a glance whether the numbers are ready before the client meeting." Capture the underlying cost or desired outcome, not the presumed remedy.
+
+**Only functional questions asked.** Social and emotional Pains and Gains are where the subtle, "illogical" requirements hide — wanting to convey competence, fearing embarrassment in front of an audience. They only surface if the interviewer asks who sees the result and what would make the Archetype look bad. If every Pain and Gain is functional, the probes weren't asked.
+
+**Empty or stale `Addresses` lines.** A Use Case that addresses nothing is unjustified — ladder up or question its place. A Pain or Gain that nothing addresses is a missing Use Case or an undeclared non-goal. Both are findings, not formatting gaps.
 
 **Internal system behavior in Scenarios.** If an Interaction describes what the system does internally — validates, processes, stores, routes — it is not a visible Interaction. Ask: "Can the Archetype observe this?" If not, it doesn't belong in the Scenario.
 

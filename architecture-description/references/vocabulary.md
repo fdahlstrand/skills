@@ -92,7 +92,13 @@ A subset of these terms is **project-facing** — terms a given project will act
 
 ## Scenarios viewpoint concepts
 
-**Use Case**: The explicit goal of an Archetype when interacting with the system. Belongs to exactly one Archetype; names intent, not mechanism. `[glossary-candidate]` — prefer over "feature", "user story", "function".
+**Driver**: Why an Archetype engages with the system at all — the higher purpose or external pressure the system is merely a tool for. Never a system capability. `[glossary-candidate]` — prefer over "business goal", "objective".
+
+**Pain**: An obstacle, cost, or risk an Archetype experiences in pursuing their Drivers — functional, social, or emotional. Identified by a bold short name in the Archetype profile; Use Cases trace to it via their `Addresses` line. `[glossary-candidate]` — prefer over "pain point", "problem".
+
+**Gain**: An outcome an Archetype wants beyond pain removal — functional, social, or emotional. Identified by a bold short name; traced from Use Cases like a Pain. `[glossary-candidate]` — prefer over "benefit", "value-add".
+
+**Use Case**: The explicit goal of an Archetype when interacting with the system. Belongs to exactly one Archetype; names intent, not mechanism. Carries an `Addresses` trace to the Drivers, Pains, and Gains it serves. `[glossary-candidate]` — prefer over "feature", "user story", "function".
 
 **Scenario**: A specific path through a Use Case, as a sequence of Interactions at the system boundary — happy path, error paths, edge cases. Contains only externally visible interactions. `[glossary-candidate]`
 

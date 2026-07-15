@@ -16,10 +16,21 @@ The thread that drives and validates the four structural viewpoints. Captures wh
 > Terms: see [../CONTEXT.md](../CONTEXT.md).
 
 ## Archetypes
-<Each named class of human (or, where modelled, external actor) that interacts with the running system. Name + one-line description. Identified by name, no slug.>
+<Each named class of human (or, where modelled, external actor) that interacts with the running system. Identified by name, no slug. Per Archetype: a narrative paragraph — who they are and their operating environment (where and when they use the system, who else sees the result, the workflow around it) — followed by:>
+
+**Drivers** — why they engage with the system at all:
+- <The higher purpose or external pressure the system is merely a tool for. Never a system capability.>
+
+**Pains**:
+- **<Short name>**: <obstacle, cost, or risk in pursuing their Drivers; situational wording — "when presenting on-site…". Tag *(social)* or *(emotional)* when the dimension is not functional; functional is the unmarked default.>
+
+**Gains**:
+- **<Short name>**: <outcome they want beyond pain removal; same optional dimension tag.>
+
+<No minimum lengths — each list is as long as understanding warrants. The bold short names are the trace handles Use Cases reference.>
 
 ## Use Cases
-<Per Archetype: the goals that Archetype pursues. Each Use Case belongs to exactly one Archetype and names intent, not mechanism.>
+<Per Archetype: the goals that Archetype pursues. Each Use Case belongs to exactly one Archetype and names intent, not mechanism. Each carries an `Addresses:` line listing the Driver/Pain/Gain short names it serves — a Use Case with an empty trace is visibly unjustified. Architectural-significance rationale is expected to lean on that trace.>
 
 ## Scenario Index
 <Navigation table to the individual scenario files in scenarios/.>
