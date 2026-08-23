@@ -1,11 +1,11 @@
 ---
 name: to-workplan
-description: Synthesize a Work Plan for a single chunk of work from the current conversation and the codebase, writing it to a gitignored .scratch/<workplan-slug>/ folder. A Work Plan documents one roadmap entry — its expected outcome, a checkbox-tracked list of Work Packages with dependencies, implementation notes, and any open questions. It also pulls in scope-relevant open (WIP) ADRs as research packages. Use this whenever the user wants to capture, plan, or write up a chunk of work — e.g. after a grill-work, grill-me, or design session, or when they say "make a work plan", "turn this into a work plan", "plan this out", or "write up this chunk of work". Do NOT use this to generate the detailed Work Package files — that is the to-workpackages skill.
+description: Synthesize a Work Plan for a single chunk of work from the current conversation and the codebase, writing it to a versioned docs/plan/<workplan-slug>/ folder. A Work Plan documents one roadmap entry — its expected outcome, a checkbox-tracked list of Work Packages with dependencies, implementation notes, and any open questions. It also pulls in scope-relevant open (WIP) ADRs as research packages. Use this whenever the user wants to capture, plan, or write up a chunk of work — e.g. after a grill-work, grill-me, or design session, or when they say "make a work plan", "turn this into a work plan", "plan this out", or "write up this chunk of work". Do NOT use this to generate the detailed Work Package files — that is the to-workpackages skill.
 ---
 
 # to-workplan
 
-Turn the current shared understanding of a chunk of work into a **Work Plan** file. A Work Plan is a transient coordination artifact for one entry on the project Roadmap. It is the single source of truth for *what packages exist, in what dependency order, and their status* — but it does not duplicate durable documentation (the Architectural Description, ADRs, glossary), and it does not contain detailed implementation plans (those live in separate Work Package files, generated later by `to-workpackages`).
+Turn the current shared understanding of a chunk of work into a **Work Plan** file. A Work Plan is a committed coordination artifact for one entry on the project Roadmap, deleted when that entry is done. It is the single source of truth for *what packages exist, in what dependency order, and their status* — but it does not duplicate durable documentation (the Architectural Description, ADRs, glossary), and it does not contain detailed implementation plans (those live in separate Work Package files, generated later by `to-workpackages`).
 
 ## Core principle: synthesize, never fabricate
 
@@ -15,17 +15,27 @@ When a fact needed for the plan is **not** supported by the context and **not** 
 
 ## Where the file goes
 
-Each Work Plan gets its own folder under a gitignored `.scratch/` at the project root:
+### Resolving the docs root
+
+This skill writes documentation paths relative to the project's **docs root**. Resolve it before reading or writing any of them. It is either a `docs/` folder at the project root, or a sibling `docs/` repository beside the source repository. When the repositories are siblings and you are running from another one, the docs root is `../docs/`. Resolve it once, then use it for every `docs/...` path below.
+
+### The plan folder
+
+Each Work Plan gets its own folder under `docs/plan/`, a peer of `docs/adr/` and `docs/architecture/`:
 
 ```
-.scratch/<workplan-slug>/
+docs/plan/<workplan-slug>/
 ├── workplan.md          ← this file
 ├── wp1-<slug>.md        ← Work Package files (made later by to-workpackages)
 ├── wp2-<slug>.md
 └── ...
 ```
 
-Write the plan to `.scratch/<workplan-slug>/workplan.md`, where `<workplan-slug>` is a short kebab-case name for the chunk. Keeping each plan and its packages together in one folder avoids a noisy flat directory once several chunks have been planned. If `.scratch/` is not yet gitignored, add it to `.gitignore` (or tell the user to) — these files are transient and must not pollute history.
+Write the plan to `docs/plan/<workplan-slug>/workplan.md`, where `<workplan-slug>` is a short kebab-case name for the chunk. Keeping each plan and its packages together in one folder avoids a noisy flat directory once several chunks have been planned.
+
+The plan is **committed**, like the Architectural Description and the ADRs. Commit it while the chunk is live. A committed plan survives a lost context window, shows progress in a diff, and can be reviewed.
+
+Delete the plan folder when the chunk's roadmap entry is checked off. Git history is the archive, and `docs/plan/` then shows only live work. `docs/plan/` carries no index file — the roadmap is the index.
 
 ## Outcome vs. output
 
@@ -38,7 +48,7 @@ Use this template:
 ```markdown
 # Work Plan: <Chunk Name>
 
-> Transient planning artifact. Roadmap entry: <reference to roadmap entry, if known>.
+> Planning artifact for one roadmap entry. Roadmap entry: <reference to roadmap entry, if known>.
 > Built against: <which Architectural Description viewpoint files / ADRs this plan was
 >   planned against, if any — reference, do not copy. Omit if no AD exists.>
 
@@ -117,7 +127,7 @@ Open architectural decisions are tracked as `Status: WIP` ADRs in `docs/adr/` (c
 
 Process:
 
-1. **Read from disk, not just the conversation.** Grep `docs/adr/` for `Status: WIP` (e.g. `grep -rln "Status: WIP" docs/adr/`). Disk is authoritative — this is why WIP markers exist, so the signal survives lost context. The current conversation is a *supplement* that catches decisions not yet flushed to disk. Because of this, `to-workplan` is useful standalone: pointed at a project with WIP ADRs lying around, it will surface them even with no grill in context.
+1. **Read from disk, not just the conversation.** Grep the docs root's `adr/` folder for WIP status: `grep -rln "Status:.*WIP" docs/adr/`. The pattern must tolerate the emphasis the ADR template emits (`- **Status:** WIP`); a literal `Status: WIP` matches nothing. Disk is authoritative — this is why WIP markers exist, so the signal survives lost context. The current conversation is a *supplement* that catches decisions not yet flushed to disk. Because of this, `to-workplan` is useful standalone: pointed at a project with WIP ADRs lying around, it will surface them even with no grill in context.
 
 2. **Filter by scope relevance, biased to include.** Openness alone does not pull an ADR in — it must impact this chunk's scope. But the relevance judgment is fuzzy, and the two failure modes are asymmetric: a *false include* is visible and you can cut it; a *false exclude* leaves a blocking decision on disk and the work hits it mid-execution. So **bias toward inclusion** and never silently drop an open ADR.
 

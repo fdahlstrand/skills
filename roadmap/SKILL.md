@@ -7,17 +7,21 @@ description: Create and maintain ROADMAP.md, a persistent, high-level backlog of
 
 `docs/ROADMAP.md` is the project's **high-level backlog**: a list of chunks of work to be done, described well enough that a human or an LLM can pick one up and turn it into a Work Plan. It describes the **path ahead** and, as work completes, also becomes a record of the **path behind**.
 
+## Resolving the docs root
+
+This skill writes documentation paths relative to the project's **docs root**. Resolve it before reading or writing any of them. It is either a `docs/` folder at the project root, or a sibling `docs/` repository beside the source repository. When the repositories are siblings and you are running from another one, the docs root is `../docs/`.
+
 ## Optional and persistent
 
 Two defining properties:
 
 - **Optional.** The roadmap is *not* a mandatory artifact. Projects often start from a single Work Plan to get a prototype off the ground, with only a loose idea of what comes next, and never need a roadmap until there's enough road ahead to be worth indexing. Create `docs/ROADMAP.md` when that point arrives — don't manufacture one prematurely.
-- **Persistent.** Unlike Work Plans (transient, gitignored in `.scratch/`), `docs/ROADMAP.md` is a durable, committed document. It lives at `docs/ROADMAP.md` — a peer of `docs/CONTEXT.md`, `docs/adr/`, and `docs/architecture/`, not privileged at repo root. It **outlives** the Work Plans it mentions: a plan is spun up, executed, and deleted, but its roadmap entry persists and gets checked off.
+- **Persistent.** Unlike Work Plans (scoped to one chunk, in `docs/plan/`), `docs/ROADMAP.md` is a durable, committed document. It lives at `docs/ROADMAP.md` — a peer of `docs/CONTEXT.md`, `docs/adr/`, `docs/architecture/`, and `docs/plan/`, not privileged at repo root. It **outlives** the Work Plans it mentions: a plan is spun up, executed, and deleted, but its roadmap entry persists and gets checked off.
 
 ## What the roadmap is NOT
 
 - Not an execution script. It does **not** carry per-chunk deliverables, file lists, acceptance criteria, or validation steps — that detail belongs in the Work Plan for each chunk (`to-workplan`). Keeping execution detail here is the failure mode that makes a roadmap try to be two things at once; resist it.
-- Not aware of Work Plans. It does **not** hard-link to plans, hold back-references, or track whether a plan exists. An entry is just prose; the matching `.scratch/<slug>/` plan may not exist yet, may exist, or may have been created and deleted. The roadmap neither knows nor cares.
+- Not aware of Work Plans. It does **not** hard-link to plans, hold back-references, or track whether a plan exists. An entry is just prose; the matching `docs/plan/<slug>/` plan may not exist yet, may exist, or may have been created and deleted. The roadmap neither knows nor cares.
 - Not a decision log (that's the `adr` skill) and not a glossary (that's `context-glossary`).
 
 ## Entries are prose
@@ -84,8 +88,8 @@ The path ahead (and behind) for <project>.
 
 - **`grill-work`** writes candidates here — future work surfaced while scoping a chunk, including deferred spec-change work (a roadmap candidate is the future Work Plan that will revise the spec). New candidates from grilling are typically `(WIP)`.
 - **`to-workplan`** treats a roadmap entry as the *chunk* it elaborates into a Work Plan. The link is by recognizable prose/name, not a formal pointer.
-- The roadmap is **durable**; the `.scratch/` Work Plans it references are **transient**. The roadmap survives them.
+- The roadmap is **durable**; the `docs/plan/` Work Plans it references are **chunk-scoped**. The roadmap survives them.
 
 ## After writing
 
-State what changed (entries added, checked off, themed, or removed). If you created `docs/ROADMAP.md` for the first time, note that it's a persistent committed artifact under `docs/` — distinct from the transient `.scratch/` plans.
+State what changed (entries added, checked off, themed, or removed). If you created `docs/ROADMAP.md` for the first time, note that it's a persistent committed artifact under `docs/` — distinct from the chunk-scoped plans in `docs/plan/`.

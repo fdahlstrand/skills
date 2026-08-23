@@ -1,15 +1,19 @@
 ---
 name: to-workpackages
-description: Generate detailed Work Package files from an existing Work Plan in the project's .scratch/<workplan-slug>/ folder. Each Work Package is a cohesive, single-sitting, non-trivial implementation task with an acceptance criterion and a task/subtask breakdown. Supports generating all packages at once (bulk) or a single named/next package. Hard-blocks any package affected by an unresolved Open Question rather than fabricating the answer. Use this whenever the user wants to flesh out, detail, or generate the work packages for a work plan — e.g. "generate the work packages", "detail WP-3", "write up the next work package", or "expand the work plan into packages". Do NOT use this to create the Work Plan itself — that is the to-workplan skill.
+description: Generate detailed Work Package files from an existing Work Plan in the project's docs/plan/<workplan-slug>/ folder. Each Work Package is a cohesive, single-sitting, non-trivial implementation task with an acceptance criterion and a task/subtask breakdown. Supports generating all packages at once (bulk) or a single named/next package. Hard-blocks any package affected by an unresolved Open Question rather than fabricating the answer. Use this whenever the user wants to flesh out, detail, or generate the work packages for a work plan — e.g. "generate the work packages", "detail WP-3", "write up the next work package", or "expand the work plan into packages". Do NOT use this to create the Work Plan itself — that is the to-workplan skill.
 ---
 
 # to-workpackages
 
-Take an existing **Work Plan** (in `.scratch/`) and produce detailed **Work Package** files — one file per package — containing the implementation plan that a developer (human or agent) executes in a single sitting.
+Take an existing **Work Plan** (in `docs/plan/`) and produce detailed **Work Package** files — one file per package — containing the implementation plan that a developer (human or agent) executes in a single sitting.
 
 ## Inputs
 
-- A Work Plan file, typically `.scratch/<workplan-slug>/workplan.md`. If the user doesn't name one and several exist, ask which. If exactly one exists, use it.
+- A Work Plan file, at `docs/plan/<workplan-slug>/workplan.md`. Because plans are committed, several may sit there at once. Pick one by this rule:
+  1. A plan with unchecked Work Packages is **live**. Prefer a live plan.
+  2. If exactly one live plan exists, use it.
+  3. If several live plans exist, ask which.
+  4. If no plan is live, say so. Do not guess.
 - Optionally, a target: a specific package (`detail WP-3`), "the next ready one", or "all" (bulk). Default to **all** packages that aren't blocked (see Open Questions handling).
 
 ## Core principle: synthesize from the plan + context + codebase, never fabricate
@@ -28,10 +32,12 @@ The Work Plan has an **Open Questions** section with `OQ-n` IDs, and packages ma
 
 ## Where files go
 
+This skill writes documentation paths relative to the project's **docs root**. Resolve it before reading or writing any of them. It is either a `docs/` folder at the project root, or a sibling `docs/` repository beside the source repository. When the repositories are siblings and you are running from another one, the docs root is `../docs/`.
+
 Write each package alongside its Work Plan, in the same plan folder:
 
 ```
-.scratch/<workplan-slug>/
+docs/plan/<workplan-slug>/
 ├── workplan.md
 ├── wp1-<slug>.md
 ├── wp2-<slug>.md
@@ -58,7 +64,7 @@ Use this template:
 ```markdown
 # WP-<id>: <Package Name>
 
-> Part of Work Plan: <workplan-slug> (see workplan.md in this folder). Transient planning artifact.
+> Part of Work Plan: <workplan-slug> (see workplan.md in this folder).
 
 ## Scope
 

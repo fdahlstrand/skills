@@ -15,11 +15,11 @@ Read `references/vocabulary.md` before working with architecture content — it 
 - It is **living**, never "done." A viewpoint is "Current" when its risks are understood and either mitigated or captured as open issues — not when it's complete.
 - It is **not** a decision log — decisions and their rationale are ADRs (the `adr` skill). Viewpoint files *reference* ADRs where relevant.
 - It is **not** the domain glossary — terminology lives in the one shared `docs/CONTEXT.md` (the `context-glossary` skill). The AD references it; it does not maintain its own.
-- It is **not** an execution plan — building work is Work Plans / Work Packages (transient, in `.scratch/`).
+- It is **not** an execution plan — building work is Work Plans / Work Packages (in `docs/plan/`).
 
 ## Document structure
 
-The AD lives under `docs/architecture/` (durable, committed — a peer of `docs/adr/`, `docs/CONTEXT.md`, `docs/ROADMAP.md`, not privileged above them):
+The AD lives under `docs/architecture/` (durable, committed — a peer of `docs/adr/`, `docs/CONTEXT.md`, `docs/ROADMAP.md`, `docs/plan/`, not privileged above them):
 
 ```
 docs/
