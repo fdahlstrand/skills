@@ -42,7 +42,7 @@ This is the contract other skills reference. The `Status` field takes exactly th
 - **Accepted** — the decision is made and the record passes the three-test gate.
 - **Superseded** — a later ADR replaces this one; note which (e.g. "Superseded by ADR-0012").
 
-A single greppable token, `WIP`, lives in the `Status` field so `grep -rn "Status: WIP" docs/adr/` surfaces every open decision across the project. Promotion (WIP → Accepted) and deletion are always deliberate human-confirmed acts, never automatic.
+A single greppable token, `WIP`, lives in the `Status` field so `grep -rn "Status:.*WIP" docs/adr/` surfaces every open decision across the project. The pattern must tolerate the emphasis the template emits (`- **Status:** WIP`); a literal `Status: WIP` matches nothing. Promotion (WIP → Accepted) and deletion are always deliberate human-confirmed acts, never automatic.
 
 ## Location and numbering
 
