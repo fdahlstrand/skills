@@ -1,6 +1,6 @@
 ---
 name: structure-source-workspace
-description: Design, scaffold, or reorganize source-code workspaces that keep shared source and CI, personal development tooling, and optional delivery composition in separately version-controlled areas. Use when establishing repository boundaries or keeping IDE, agent, and deployment choices out of a neutral source tree.
+description: Design, scaffold, or reorganize source-code workspaces that keep shared source and CI, personal development tooling, and optional delivery composition in separately version-controlled areas. Use when establishing repository boundaries or keeping IDE, agent, and deployment choices out of a neutral source tree. For containerizing the executable toolchain itself, use configure-toolchain.
 ---
 
 # Structure Source Workspace
@@ -23,6 +23,7 @@ Before generating tool-specific files, obtain explicit answers to these question
 - Which language, build system, and CI provider does the source use?
 - Is delivery/composition in scope now, optional for later, or deliberately excluded?
 - Does "clean source" prohibit only personal configuration, or also generated build output and caches?
+- Does the component have an executable toolchain, and must it run on the host or in a project-owned container?
 
 Ask the user about the target IDE and LLM/agent tooling; do not infer those choices solely from files already present. Combine missing questions into a concise prompt. Do not block a purely conceptual comparison on details that would not affect it.
 
@@ -45,7 +46,7 @@ Apply these dependency directions:
 
 - `workbench` may refer to and operate on `source`.
 - `delivery` may consume versioned artifacts produced from one or more source repositories.
-- `source` must not depend on `workbench` or a particular delivery repository.
+- `source` must not depend on `workbench` or a particular delivery repository. Operationally: the build contract runs from a bare clone, and any path outside the source tree is a caller-supplied parameter with a working default.
 - Prefer delivery composition of immutable artifacts over rebuilding several raw source trees together.
 
 Keep CI with the integration boundary it validates. Component CI belongs with component source. Delivery may have its own validation for composition, environment definitions, promotion, and system-level tests; it must not silently redefine the component build.
@@ -60,6 +61,7 @@ For IDEs and editors:
 - Make `source` the working directory for shared build, test, lint, and debug commands when required.
 - Keep portable references relative to the workbench where the tool supports them.
 - Do not open `source` directly if that causes the tool to create project metadata there.
+- If the toolchain is containerized, point the tool at the container's compiler, interpreter, and language server rather than a parallel host installation. See the `configure-toolchain` skill.
 
 For LLM and agent tools:
 
@@ -82,7 +84,7 @@ When authorized to implement:
 3. Put shared build, test, lint, packaging, contributor documentation, and component CI definitions in `source`.
 4. Put selected IDE and LLM/agent workspace definitions, personal notes, and convenience wrappers in `workbench`.
 5. Put artifact selection, composition, environment, promotion, deployment, and product-level supply-chain definitions in `delivery` when requested.
-6. Make personal wrappers invoke the canonical commands exposed by `source`; do not duplicate compiler or linter policy in `workbench`.
+6. Make personal wrappers invoke the canonical commands exposed by `source`; do not duplicate compiler or linter policy in `workbench`. A wrapper may supply parameters — cache paths, extra composition files, environment — but never policy.
 7. Avoid adding a catalogue of personal tools to source `.gitignore` or `.git/info/exclude` as a substitute for the physical boundary.
 
 Do not configure remotes, publish repositories, or move destructive targets unless those actions are explicitly within scope. Stop and ask before any migration whose repository history or ownership is unclear.
@@ -96,6 +98,7 @@ Verify observable boundaries rather than only checking committed files:
 - Compare the source filesystem before and after opening each selected IDE or agent tool; check tracked, untracked, and ignored additions.
 - Confirm that workspace tasks invoke the shared build contract from the correct source working directory.
 - Confirm that personal configuration and state remain under `workbench`.
+- Confirm that `source` copied alone to a scratch directory, with no siblings present, still builds and tests through its own entry point, and that no committed file in it names `../` or the workbench.
 - If delivery is present, confirm that it pins identifiable artifacts and preserves links to their SBOMs or provenance rather than depending on mutable source state.
 
 Report the final tree, repository ownership, opening commands for the selected tools, verification performed, and any tool limitation that could still write into `source`.

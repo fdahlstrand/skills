@@ -12,6 +12,7 @@ It normally owns:
 - dependency manifests and lockfiles;
 - compiler, build, test, lint, and normative formatting configuration;
 - reproducible packaging needed to create an environment-neutral component artifact;
+- the containerized development toolchain definition and the entry point that runs it;
 - contributor guidance and architecture needed to change the component;
 - component CI and its supply-chain checks;
 - generation of an artifact-bound component SBOM and provenance.
@@ -19,6 +20,8 @@ It normally owns:
 A file does not become personal merely because an IDE consumes it. A formatter or linter configuration belongs in `source` when it defines a convention that contributors and CI must follow.
 
 Source should expose a stable build contract such as `make verify`, `make test`, or `make package`. Personal and delivery automation should invoke that contract rather than reproducing its implementation.
+
+The contract must be self-contained. A contributor may clone `source` alone, so it must build and test with no parameters and no sibling directories present. Any path outside the source tree is a caller-supplied parameter with a working default, never a committed literal — and not an untracked or ignored file inside `source` either, since "not versioned" is weaker than "not present." This is the operational answer to classification question 5, and it applies to every build contract, containerized or not.
 
 ## Workbench
 
@@ -30,6 +33,7 @@ It normally owns:
 - personal LLM and agent instructions, prompts, skills, and tool connections;
 - notes, review checklists, experiments, and scratch material;
 - convenience scripts that delegate to the source build contract;
+- host prerequisites, IDE remote-toolchain configuration, and the parameter values that point the source build contract at workbench paths;
 - personal launch, navigation, and multi-root workspace definitions;
 - ignored caches, indexes, and transient state when their location is configurable.
 
@@ -43,6 +47,7 @@ It normally owns:
 
 - selection of exact component artifacts;
 - composition of multiple components into a product or distribution;
+- runtime and production images, which are distinct from the development toolchain container;
 - deployment topology and environment-specific configuration;
 - release promotion, signing, rollout, and rollback policy;
 - product-level integration and smoke tests;
@@ -57,7 +62,7 @@ Prefer references to immutable artifacts by digest. Bind each selected artifact 
 
 CI follows the integration boundary:
 
-- Component CI validates source changes and produces a component artifact, SBOM, and provenance.
+- Component CI validates source changes and produces a component artifact, SBOM, and provenance. It invokes the entry point with default parameters, which keeps source self-containment true continuously rather than at review time.
 - Composition CI validates a selected set of component artifacts as a coherent product.
 - Delivery automation promotes the already identified product composition into environments.
 
