@@ -118,6 +118,10 @@ A seam nobody can name a risk for is suspect. For each seam:
 
 > "How long does a full build take? Is that acceptable? Where are the bottlenecks?"
 
+> "Does the toolchain run on the developer's host, or in a project-owned container? What bounds what dependency-supplied code can reach during a build?"
+
+Repository boundaries and where tool configuration is allowed to live are owned by the `structure-source-workspace` skill; containment of build-time execution is owned by `configure-toolchain`. Elicit the fact here and record it; route the design work to those skills.
+
 **Internal dependencies**: Which modules depend on which? Is this structure intentional?
 
 ### External dependencies

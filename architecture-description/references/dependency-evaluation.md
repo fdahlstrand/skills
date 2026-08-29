@@ -76,7 +76,9 @@ Two concerns, both recorded explicitly:
 - **Transitive closure** — what the dependency itself pulls in; every
   transitive dependency inherits this whole evaluation.
 - **Install-time and build-time behavior** — install hooks, code generation,
-  network access during build.
+  network access during build. This record *prices* that exposure; what
+  *bounds* it is the toolchain container, owned by the `configure-toolchain`
+  skill. A residual risk accepted here should say what contains it.
 - **Pinning and verification** — lockfiles, checksums, signature or
   transparency-log verification; whether upgrades are explicit or automatic.
 - **Ecosystem scrutiny** — how many serious projects depend on it (more eyes
