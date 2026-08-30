@@ -10,37 +10,86 @@ All viewpoint files: start with a one-line link to the shared glossary (`see ../
 
 The thread that drives and validates the four structural viewpoints. Captures what the system must do, for whom, and why.
 
+This viewpoint spans two record-set directories: `archetypes/` (one file per Archetype, carrying its Use Cases) and `scenarios/` (one file per Scenario). `scenarios.md` itself is the **selection surface** — it holds what is shared across Archetypes plus the indexes, and stays small.
+
 ```markdown
 # Scenarios
 
 > Terms: see [../CONTEXT.md](../CONTEXT.md).
 
-## Archetypes
-<Each named class of human (or, where modelled, external actor) that interacts with the running system. Identified by name, no slug. Per Archetype: a narrative paragraph — who they are and their operating environment (where and when they use the system, who else sees the result, the workflow around it) — followed by:>
+## System Summary
+<One paragraph: what the system does, for whom.>
 
-**Drivers** — why they engage with the system at all:
-- <The higher purpose or external pressure the system is merely a tool for. Never a system capability.>
+## Non-Goals
+<What this system deliberately does not do, and why. Shared across Archetypes,
+so it lives here rather than in any one archetype file.>
 
-**Pains**:
-- **<Short name>**: <obstacle, cost, or risk in pursuing their Drivers; situational wording — "when presenting on-site…". Tag *(social)* or *(emotional)* when the dimension is not functional; functional is the unmarked default.>
+## Archetype Index
 
-**Gains**:
-- **<Short name>**: <outcome they want beyond pain removal; same optional dimension tag.>
+| Archetype | Summary | File |
+|---|---|---|
+| Reviewer | <one line: who they are and what they want> | [archetypes/reviewer.md](archetypes/reviewer.md) |
 
-<No minimum lengths — each list is as long as understanding warrants. The bold short names are the trace handles Use Cases reference.>
+## Use Case Index
+<Every Use Case across all Archetypes, so a reader can find one without
+knowing which Archetype owns it.>
 
-## Use Cases
-<Per Archetype: the goals that Archetype pursues. Each Use Case belongs to exactly one Archetype and names intent, not mechanism. Each carries an `Addresses:` line listing the Driver/Pain/Gain short names it serves — a Use Case with an empty trace is visibly unjustified. Architectural-significance rationale is expected to lean on that trace.>
+| Use Case | Archetype | Architecturally Significant | File |
+|---|---|---|---|
+| Review a pending change | Reviewer | Yes | [archetypes/reviewer.md](archetypes/reviewer.md) |
 
 ## Scenario Index
-<Navigation table to the individual scenario files in scenarios/.>
 
 | Scenario | Archetype | Use Case | File |
 |---|---|---|---|
-| SC-001 successful login | … | … | [SC-001-successful-login.md](scenarios/SC-001-successful-login.md) |
+| SC-001 successful login | … | … | [scenarios/SC-001-successful-login.md](scenarios/SC-001-successful-login.md) |
+
+## Cross-Viewpoint Validation
+<What walking these scenarios confirmed or broke in the other viewpoints.>
+```
+
+### `archetypes/<name>.md`
+
+One file per Archetype, slug lowercased from the Archetype name (no number — Archetypes are named). Each carries **its own Use Cases**: a Use Case's `Addresses:` line references Pain and Gain short names defined only in its Archetype's profile, so splitting them apart would leave dangling references and cost a read rather than save one.
+
+```markdown
+# {Archetype}
+
+> Terms: see [../../CONTEXT.md](../../CONTEXT.md).
+
+<A narrative paragraph — who they are and their operating environment: where
+and when they use the system, who else sees the result, the workflow around it.>
+
+**Drivers** — why they engage with the system at all:
+- <The higher purpose or external pressure the system is merely a tool for.
+  Never a system capability.>
+
+**Pains**:
+- **<Short name>**: <obstacle, cost, or risk in pursuing their Drivers;
+  situational wording — "when presenting on-site…". Tag *(social)* or
+  *(emotional)* when the dimension is not functional; functional is the
+  unmarked default.>
+
+**Gains**:
+- **<Short name>**: <outcome they want beyond pain removal; same optional tag.>
+
+<No minimum lengths — each list is as long as understanding warrants. The bold
+short names are the trace handles Use Cases reference.>
+
+## Use Cases
+
+### {Use Case name}
+**Goal**: <the Archetype's intent, not the mechanism.>
+**Addresses**: <Driver/Pain/Gain short names from above. An empty trace is a
+visibly unjustified Use Case.>
+**Architecturally Significant**: <Yes/No — and why, leaning on the trace.>
+**Preconditions**: <what must hold before this begins.>
+**Scenarios**: <links into scenarios/, or "None yet.">
 ```
 
 Individual scenarios live flat in `scenarios/SC-NNN-<slug>.md`, globally unique, permanent numbers (gaps never reused). Each describes one path through a Use Case as a sequence of boundary Interactions (Archetype→System or System→Archetype) — externally visible only, never internal mechanics.
+
+`scenarios/` is a **sibling** of `archetypes/`, not nested inside it. Use Case → Scenario is a *trace* relation rather than composition: a Scenario is reachable by its global `SC-NNN` without knowing which Archetype owns its Use Case, and it survives the Use Case being restructured.
 
 ---
 
@@ -144,9 +193,16 @@ whether this view describes or prescribes.>
 <Convention statement: every external dependency gets a recorded evaluation
 *before* adoption — liability plus supply chain — per the dependency
 evaluation reference (references/dependency-evaluation.md in the
-architecture-description skill). Summary table (dependency, scope, verdict,
-date) plus one subsection per dependency with the full record.>
+architecture-description skill).>
+
+| Dependency | Scope | Verdict | Date |
+|---|---|---|---|
+| [Electron](dependencies/electron.md) | Shipped | Accepted | 2026-08-29 |
+
+<Plus any paragraphs naming which ADRs decided the liability half.>
 ```
+
+The full evaluations do **not** live here. Each dependency gets its own file in `dependencies/` — a record set, per the two gates in `SKILL.md`. This section keeps the convention and the selection table and links out; without that split, the evaluations grow to dominate the viewpoint and an agent must load all of them to read any of them. Evidence (a sweep report, a survey) goes in `dependencies/sweep-report.md`, not here.
 
 Once this section exists, adopting a dependency without a recorded evaluation is a convention violation, not an oversight.
 

@@ -249,7 +249,7 @@ Use the language/package-manager security mechanisms available to the project in
 
 Do not assume vulnerability scanners detect malicious-but-new packages. The container boundary must remain useful even when a dependency is actively malicious.
 
-This skill contains the risk; it does not price it. The per-dependency evaluation — liability, security posture, licence, and the residual risks accepted by name — belongs in the Development view's External Dependencies section, owned by the `architecture-description` skill. Record residual risk there rather than leaving it in a commit message.
+This skill contains the risk; it does not price it. The per-dependency evaluation — liability, security posture, licence, and the residual risks accepted by name — belongs in that dependency's file under `docs/architecture/dependencies/`, indexed from the Development view's External Dependencies section and owned by the `architecture-description` skill. Record residual risk there rather than leaving it in a commit message.
 
 Read `references/language-guidance.md` when language-specific decisions are needed.
 
@@ -368,7 +368,7 @@ Do not:
 ## Relationship to other skills
 
 - **`structure-source-workspace`** owns the ownership axis — which repository a file belongs to, and the self-containment rule this skill's entry point must satisfy. It decides *where a file lives*; this skill decides *where code runs*. Consult it whenever the workspace has separate ownership areas.
-- **`architecture-description`** owns the per-dependency evaluation record in the Development view's External Dependencies section. That record prices the supply-chain risk; the container configured here bounds it.
+- **`architecture-description`** owns the per-dependency evaluation record — one file per dependency in `docs/architecture/dependencies/`, indexed from the Development view. That record prices the supply-chain risk; the container configured here bounds it.
 - **`adr`** records the hard-to-reverse choices listed under Decision rules.
 
 ## Success criteria

@@ -11,7 +11,7 @@ Defines the structure and content conventions for `docs/architecture/index.md` �
 2. **Coding agents** — a map to find relevant architectural detail without loading all files.
 3. **Elicitation skills** — session resumption without reading every view file.
 
-It must be navigable in isolation: every section useful without the other view files.
+It must be navigable in isolation: every section useful without the other view files. It is a **map**, not a destination — it stays small enough that reading it is never a reason to skip reading it.
 
 ---
 
@@ -22,6 +22,16 @@ It must be navigable in isolation: every section useful without the other view f
 
 > **Living document.** Best current understanding of the architecture of {System Name}.
 > Expected to change as new information surfaces.
+> **AD revision: 2**
+
+## Current State
+
+**As of**: {YYYY-MM-DD}
+
+{One or two sentences: what the architecture has settled and what it has not.
+Written so an agent picking this up cold knows whether the ground is firm.}
+
+**Next**: {a specific viewpoint, risk, or chunk — and why it is next.}
 
 ## System
 
@@ -41,7 +51,7 @@ Domain terms are defined in the shared project glossary [../CONTEXT.md](../CONTE
 | Deployment | [deployment.md](deployment.md) | {Not started / In progress / Current} | {date or —} |
 | Development | [development.md](development.md) | {Not started / In progress / Current} | {date or —} |
 
-Note: The Scenarios viewpoint spans multiple files. `scenarios.md` describes all Archetypes and Use Cases and provides a navigation index; individual Scenario files live flat in `scenarios/` with globally unique `SC-NNN` numbers. Read `scenarios.md` first.
+Note: two viewpoints span a directory as well as a file. Scenarios: `scenarios.md` indexes the Archetypes in `archetypes/` and the Scenarios in `scenarios/`. Development: `development.md` indexes the external dependencies in `dependencies/`. Read the viewpoint file first — it holds the selection table.
 
 ## Risk Register
 
@@ -49,32 +59,30 @@ Active architectural risks across all viewpoints. Engineering risks — concerns
 
 | # | Risk | Viewpoint(s) | Severity | Status |
 |---|---|---|---|---|
-| R-001 | {description} | {viewpoint} | {High / Medium / Low} | {Open / Mitigated} |
+| R-001 | {description} | {viewpoint} | {High / Medium / Low} | {Open / Mitigated / Closed} |
+
+A closed or mitigated risk keeps its row and carries its closure rationale inline. That rationale is the durable record of *why* it closed — it lives here and nowhere else.
 
 ## Open Issues Summary
 
-Cross-viewpoint navigation index of open issues. Full detail lives in each viewpoint file as an `[!OPEN]` callout.
+Cross-viewpoint navigation index of open issues. Full detail lives as an `[!OPEN]` callout in the file that holds it.
 
 | Issue | Viewpoint | File |
 |---|---|---|
-| {one-line description} | {viewpoint} | [{file}]({file}.md) |
+| {one-line description} | {owning viewpoint} | [{path}]({path}) |
 
-## Session Log
-
-Most recent first.
-
-### {YYYY-MM-DD} — {Session Focus}
-
-**Explored**: {viewpoints and topics covered}
-**Decisions**: {key decisions made or confirmed — link ADRs}
-**Opened**: {new open issues or risks}
-**Closed**: {open issues or risks resolved}
-**Next**: {recommended focus, with rationale}
+The **File** column names the file that actually holds the callout, which may be a record file (`archetypes/reviewer.md`, `dependencies/electron.md`), not only a viewpoint file. The **Viewpoint** column names the owning viewpoint regardless.
 ```
 
 ---
 
 ## Conventions
+
+### Current State
+- **One block, overwritten every session. Never appended to.** The moment it grows a second dated entry it has become a session log, which is the thing revision 2 removed.
+- It carries only what has no other home. `Explored` is the Viewpoint Map's Last Updated column; `Decisions` are ADRs; `Opened` is the Open Issues Summary; `Closed` is the Risk Register's own closure rationale; terminology is `CONTEXT.md`. **`Next` is the only field with nowhere else to live.**
+- `As of` makes staleness visible. A `Next` under a three-month-old date reads as stale rather than current, which is exactly right.
+- History is the git log of `docs/architecture/`. The AD keeps no log of its own.
 
 ### Viewpoint status
 - **Not started** — no file, or empty.
@@ -87,26 +95,28 @@ Assess by: *what is the impact if this risk materializes and we haven't addresse
 - **Medium** — significant rework of one or more viewpoints required.
 - **Low** — addressable locally without structural change.
 
-### Session log — "Next"
-A recommendation, not a commitment. Name a specific viewpoint or risk and why it warrants attention. The user always drives the actual choice.
+### The revision marker
+`**AD revision: N**` declares which structural revision this AD follows. Absence means revision 1. An agent whose skill declares a higher revision migrates first — see `migration.md`.
 
 ---
 
 ## Coding agent guidance
 
 When an agent reads `index.md` to understand the system:
-- Read [../CONTEXT.md](../CONTEXT.md) first — the shared domain glossary defining terms used throughout.
+- Read **Current State** first — it says whether the ground is firm and what is in flight.
+- Read [../CONTEXT.md](../CONTEXT.md) — the shared domain glossary defining terms used throughout.
 - Check the ADRs in `../adr/` to understand key decisions and rationale before making changes.
-- Use **Viewpoint Map** to find the right file for the concern at hand.
+- Use **Viewpoint Map** to find the right file for the concern at hand, then its selection table to reach the right record file. Do not load a whole viewpoint to find one record.
 - Check **Open Issues Summary** for what is known to be unresolved.
-- Don't assume absence of documentation means absence of a decision — check the **Session Log**.
+- Don't assume absence of documentation means absence of a decision — check `../adr/` and the git history of `docs/architecture/`.
 
 ---
 
 ## Maintenance rules
 
-- Update `index.md` at the end of every session.
+- Update `index.md` at the end of every session: **Current State** rewritten, Viewpoint Map status and dates, Risk Register, Open Issues Summary.
 - Domain terms go to the shared `docs/CONTEXT.md` via context-glossary — do not maintain a separate architecture glossary.
-- Every `[!OPEN]` issue in a view file must appear in **Open Issues Summary**.
-- Every resolved issue must be removed from the view file and recorded as closed in the **Session Log**.
+- Every `[!OPEN]` callout anywhere under `docs/architecture/` — viewpoint files and record files alike — must appear in **Open Issues Summary**, with the **File** column pointing at the file that holds it.
+- A resolved issue is removed from its file and its row from the summary. The git history records that it closed.
 - **Viewpoint Map** status must reflect actual file state — do not mark "Current" while significant open issues remain.
+- `index.md` stays a map. If a section is growing without bound, it is content that belongs in a viewpoint or a record file, or it is a log that should not exist.

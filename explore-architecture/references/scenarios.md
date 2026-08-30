@@ -34,11 +34,14 @@ Internal system behavior is never part of a Scenario. Only what crosses the boun
 
 ## File Structure
 
-The Scenarios viewpoint uses a flat file structure. Archetypes and Use Cases are described in `scenarios.md`. Each Scenario is a single file in `scenarios/` with a globally unique sequential number.
+The Scenarios viewpoint spans two record-set directories. Each Archetype is a file in `archetypes/`, carrying its own Use Cases; each Scenario is a file in `scenarios/` with a globally unique sequential number. `scenarios.md` holds what is shared across Archetypes — the system summary, non-goals, cross-viewpoint validation — plus the navigation indexes.
 
 ```
 docs/architecture/
-├── scenarios.md                          # Archetypes, Use Cases, and navigation index
+├── scenarios.md                          # non-goals, indexes, cross-viewpoint validation
+├── archetypes/
+│   ├── reviewer.md                       # narrative, Drivers, Pains, Gains, Use Cases
+│   └── administrator.md
 └── scenarios/
     ├── SC-001-successful-login.md
     ├── SC-002-incorrect-password.md
@@ -46,7 +49,9 @@ docs/architecture/
     └── SC-004-reset-via-email.md
 ```
 
-Scenario files are identified by a globally unique `SC-NNN` number. The number is identity; the descriptive name is readability. Two scenarios may share a descriptive name — their numbers make them distinct. Scenario files are self-contained: each one states its Use Case goal and Archetype so it can be understood without opening `scenarios.md`.
+Use Cases live with their Archetype because their `Addresses` trace names Pains and Gains defined only in that Archetype's profile. `scenarios/` is a sibling of `archetypes/`, not nested inside it: Use Case → Scenario is a *trace*, and `SC-NNN` is global, so a Scenario is reachable without knowing which Archetype owns its Use Case. The file structure is owned by `architecture-description`; see its `references/viewpoint-templates.md`.
+
+Scenario files are identified by a globally unique `SC-NNN` number. The number is identity; the descriptive name is readability. Two scenarios may share a descriptive name — their numbers make them distinct. Scenario files are self-contained: each one states its Use Case goal and Archetype so it can be understood without opening `scenarios.md` or its Archetype file.
 
 ---
 
@@ -92,7 +97,7 @@ Archetype names must be unique within the system. If two candidate Archetypes ha
 
 Watch for **Archetype conflation** — "users" that are actually two distinct Archetypes with different goals, permissions, or interaction patterns. Probe for variation: new vs. experienced, high-volume vs. occasional, technical vs. non-technical.
 
-Note: external systems that interact with the running system are not currently modelled as Archetypes. If the user raises an external system as an actor, acknowledge it as architecturally relevant, capture it as a named concern, and note that it is covered by the open issue for external system modelling in `scenarios.md`.
+Note: external systems that interact with the running system are not currently modelled as Archetypes. If the user raises an external system as an actor, acknowledge it as architecturally relevant, capture it as a named concern, and note that it is covered by the open issue for external system modelling in the Scenarios viewpoint.
 
 ### Identifying Use Cases
 

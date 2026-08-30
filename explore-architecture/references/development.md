@@ -126,7 +126,7 @@ Repository boundaries and where tool configuration is allowed to live are owned 
 
 ### External dependencies
 
-Every external dependency gets a recorded evaluation *before* adoption — liability plus supply chain — kept in the Development view's External Dependencies section. The convention and record format are defined in the `architecture-description` skill's `references/dependency-evaluation.md`; load it when a dependency is on the table. Elicit per dependency:
+Every external dependency gets a recorded evaluation *before* adoption — liability plus supply chain — recorded one file per dependency in `docs/architecture/dependencies/`, indexed by a selection table in the Development view's External Dependencies section. The convention and record format are defined in the `architecture-description` skill's `references/dependency-evaluation.md`; load it when a dependency is on the table. Elicit per dependency:
 
 > "What is its scope — test-only, build-only, or shipped? What reaches your users?"
 
@@ -137,6 +137,10 @@ Every external dependency gets a recorded evaluation *before* adoption — liabi
 > "What does its security posture look like — advisory history, maintainer structure, transitive closure, install-time behavior, pinning and verification?"
 
 > "What residual risks are you accepting, by name? How are upgrades handled — reviewed like code, never auto-adopted?"
+
+Write the record **before** the dependency is adopted, with `Verdict: WIP` — that is what the "before adoption" convention means in practice, and it reads to a later agent as *do not add this to the lockfile yet*. Flip it to `Accepted` when the decision is made.
+
+Where candidates were compared, the losers get **no file of their own**. Their reasoning goes in the winner's `## Why this dependency` section, or in an ADR when the choice is architecturally significant. Where the choice was obvious, record nothing — the AD holds the dependencies the project has, not the ones it considered.
 
 In descriptive mode, sweep the existing dependency manifest and flag any dependency with no recorded evaluation.
 
@@ -182,7 +186,7 @@ Record the answer in the view's First-Increment Instantiation section.
 
 ## Output Structure
 
-The structure of `development.md` is owned by the `architecture-description` skill — see its `references/viewpoint-templates.md` (required core, a conditionally required External Dependencies section, and an optional menu). This guide elicits the content; it does not define the file.
+The structure of `development.md` is owned by the `architecture-description` skill — see its `references/viewpoint-templates.md` (required core, a conditionally required External Dependencies section that indexes the `dependencies/` record set, and an optional menu). This guide elicits the content; it does not define the file.
 
 ---
 

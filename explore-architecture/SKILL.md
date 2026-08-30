@@ -27,7 +27,7 @@ Requires file system access — it reads the existing AD to resume, and writes c
 
 ## Session start protocol
 
-1. **Read the index.** If `docs/architecture/index.md` exists, read it: what viewpoints are explored, open issues, risk register, recent session log. If `docs/architecture/` doesn't exist, this is a first session — the AD structure will be created (per `architecture-description`) as content is confirmed, and the shared `docs/CONTEXT.md` seeded (via `context-glossary`) as terms surface.
+1. **Read the index.** If `docs/architecture/index.md` exists, read it: current state, what viewpoints are explored, open issues, risk register. **Check its `AD revision:` marker against the revision `architecture-description`'s SKILL.md declares** — if the AD is older, or has no marker (absence means revision 1), run the migration in that skill's `references/migration.md` before anything else, and report what moved and what gaps it recorded. Do not load whole viewpoint files to find one record; use the selection tables. If `docs/architecture/` doesn't exist, this is a first session — the AD structure will be created (per `architecture-description`) as content is confirmed, and the shared `docs/CONTEXT.md` seeded (via `context-glossary`) as terms surface.
 2. **Orient the user.** Briefly summarize what's known, what's open, which viewpoints are unexplored, and make a concrete **risk-driven recommendation** for where to focus — while making clear the user drives the choice.
 3. **Agree on focus.** Confirm which viewpoint or concern to explore. A session may touch several viewpoints — expected and healthy.
 
@@ -56,13 +56,22 @@ Load the relevant interview guide when a viewpoint becomes the focus. These guid
 
 Sessions have no clean boundary; capture in the moment so findings survive. Before writing, show the user exactly what will change — which file(s), a preview of the content, any open issues opened or closed — and wait for confirmation. On confirmation:
 
-- **Viewpoint content** → write into the relevant `docs/architecture/` file per `architecture-description` conventions; update `index.md` (viewpoint map status, risk register, open-issues summary, session log).
+- **Viewpoint content** → write into the relevant `docs/architecture/` file per `architecture-description` conventions. **Run that skill's two gates before writing**: does this already have a durable home (if so, don't write it), and is it a record set (if so, it goes in its directory, not the viewpoint file). Update `index.md` (current state, viewpoint map status, risk register, open-issues summary).
 - **A decision meeting the three-test gate** → record via the `adr` skill (recognize it explicitly: "this is an ADR — hard to reverse, and the reasoning won't be visible in the code"), then reference it inline from the viewpoint file. The `adr` skill handles numbering, the index, and status.
 - **A domain term** → record via the `context-glossary` skill in `docs/CONTEXT.md`.
+- **A rejected alternative** → record where the alternative *would have lived*: the viewpoint section, or the ADR that settled the choice. Never only in the session's narrative — the AD keeps no narrative, so an unfiled rejection is lost.
 
 ### Open issues
 
-Use the `[!OPEN]` callout owned by `architecture-description`, recorded inline in the viewpoint file and indexed in `index.md`. Resolved issues are removed from the view file and recorded as closed in the session log. This is also where drift flagged by `grill-work` or implementation lands — an `explore-architecture` session is where such open issues get resolved.
+Use the `[!OPEN]` callout owned by `architecture-description`, recorded inline in the file the issue is *about* — a record file such as `archetypes/reviewer.md` or `dependencies/electron.md` as readily as a viewpoint file, but never an evidence file — and indexed in `index.md` by that file. A resolved issue is removed from its file and from the summary; the git history records that it closed. This is also where drift flagged by `grill-work` or implementation lands — an `explore-architecture` session is where such open issues get resolved.
+
+## Session end
+
+Before closing, three checks:
+
+1. **Rewrite `## Current State`** in `index.md` — `As of`, what is and is not settled, and `Next`. It is overwritten, never appended to; the AD keeps no session log, and the git history of `docs/architecture/` is the record of what happened. Write a commit message that carries the session's reasoning, since that is now where it lives.
+2. **Record-set hygiene.** Did this session append a record to a section that has become a record set — a further dependency, archetype, or similar accreting subject sitting inline in a viewpoint file? If so, give it its directory now, per the two gates in `architecture-description`.
+3. **Evidence hygiene.** Any investigation recorded this session belongs in an evidence file organized by subject, superseding what it replaces — never appended as a new dated block.
 
 ## Risk-driven prioritization
 

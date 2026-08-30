@@ -32,7 +32,7 @@ A subset of these terms is **project-facing** — terms a given project will act
 
 **Stakeholder**: An individual, team, organization, or class with an interest in the realization of the system — not only users, but developers, operators, acquirers, regulators, etc. `[glossary-candidate]`
 
-**Archetype**: A named class of human who interacts directly with a running instance of the system; a subtype of Stakeholder, and the actor in the Scenarios viewpoint. Identified by name alone (no slug). `[glossary-candidate]` — prefer over "user", "actor" (UML), "persona".
+**Archetype**: A named class of human who interacts directly with a running instance of the system; a subtype of Stakeholder, and the actor in the Scenarios viewpoint. File-backed: each lives in `archetypes/<name>.md` and carries its own Use Cases. Identified by name; the slug is that name lowercased, never a number. `[glossary-candidate]` — prefer over "user", "actor" (UML), "persona".
 
 **Concern**: A requirement, objective, constraint, intention, or aspiration a stakeholder has for the architecture. Broader than "requirement."
 
@@ -48,7 +48,13 @@ A subset of these terms is **project-facing** — terms a given project will act
 
 **Viewpoint**: The patterns, templates, and conventions for constructing one type of view; defines whose concerns it reflects and how its views are built.
 
-**Open Issue**: A concern, question, or risk identified but not yet resolved, recorded as an `[!OPEN]` callout in the AD. (Convention defined in the main SKILL.) Avoid "TODO", "gap".
+**Open Issue**: A concern, question, or risk identified but not yet resolved, recorded as an `[!OPEN]` callout in the file it is about — viewpoint file or record file — and indexed in `index.md`. (Convention defined in the main SKILL.) Avoid "TODO", "gap".
+
+**Record Set**: A section of the AD whose contents accrete indefinitely as one independently-readable record per subject. Qualifies only when all three hold: unbounded accretion, keyed access (the filename discriminates), and bodied records. A record set lives in its own directory named for the record type, one level under `docs/architecture/`, from the first record — never inside a viewpoint file. Archetypes, Scenarios, and external dependencies are record sets; the Risk Register is not. (The test is defined in the main SKILL.)
+
+**Evidence**: A dated record of what an investigation found — a dependency sweep, a parser survey, a benchmark. Distinct from a durable claim: evidence describes *now*, is organized by subject rather than by run, and is **superseded in place** when re-run. Evidence files never carry `[!OPEN]` callouts, which supersession would silently delete.
+
+**AD Structure Revision**: The integer version of the AD's file/section structure, declared in `index.md` and matched against the `architecture-description` skill. Absence of a marker means revision 1. See `references/migration.md`.
 
 ---
 
@@ -82,7 +88,7 @@ A subset of these terms is **project-facing** — terms a given project will act
 
 **Session**: A single working conversation in which one or more viewpoints are explored and the AD is updated. (Relevant to elicitation skills.)
 
-**Session Log**: A timestamped record in `index.md` of what each session explored and left open.
+**Current State**: A single block at the top of `index.md`, carrying an `As of` date, what the architecture has and has not settled, and what is recommended next. **Overwritten every session, never appended to.** Avoid "session log", "changelog" — the AD keeps no history of its own; what happened is the git history of `docs/architecture/`.
 
 **Problem Space**: The domain of stakeholder needs, concerns, constraints, and risks the system must address — explored primarily through Scenarios.
 
@@ -106,7 +112,9 @@ A subset of these terms is **project-facing** — terms a given project will act
 
 **Happy Path**: The Scenario where everything proceeds as intended and the Archetype achieves their goal without error.
 
-**Slug**: A short, human-readable filename identifier. Only file-backed elements have slugs. Scenarios use `SC-NNN` (globally unique, permanent, never reused). Archetypes and Use Cases are named, no slug.
+**Slug**: A short, human-readable filename identifier. Only file-backed elements have slugs. Scenarios use `SC-NNN` (globally unique, permanent, never reused). Archetypes are file-backed and slugged from their name, with no number. Use Cases live inside their Archetype's file and have no slug.
+
+**Trace**: A named reference from one element to another that it serves or exercises, without ownership. A Use Case *traces* to Drivers, Pains, and Gains via its `Addresses` line; a Scenario *traces* to its Use Case. A trace is not composition: traced elements may live in separate files, and `scenarios/` is a sibling of `archetypes/` for exactly this reason.
 
 ---
 
